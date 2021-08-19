@@ -1,4 +1,4 @@
-def NB(partic):
+def NB(partic, subject):
     # inspired by https://www.datacamp.com/community/tutorials/naive-bayes-scikit-learn
     import matplotlib.pyplot as plt
     import numpy as np
@@ -11,7 +11,7 @@ def NB(partic):
     # Input is an array of several cofusion matrices, namely as many as we define folds in our classification.
     # This function averages the conf. matrices and plots the mean cm.
     # check out https://towardsdatascience.com/demystifying-confusion-matrix-confusion-9e82201592fd for further explanations
-    def my_plot(cm, splits):
+    def my_plot(cm, splits, score):
         # max number of detections over splits
         max_tp = cm.max()
         # average the matrices from every fold
@@ -26,7 +26,9 @@ def NB(partic):
         fig.colorbar(cax)
         plt.xlabel('Predicted')
         plt.ylabel('True')
-        plt.show()
+        #plt.show()
+        ConfusionMatrix = str(subject+'_Acc_'+score+'.png')
+        plt.savefig(ConfusionMatrix)
         ax.xaxis.set_major_locator(MultipleLocator(1))
         ax.yaxis.set_major_locator(MultipleLocator(1))
 
@@ -53,9 +55,11 @@ def NB(partic):
             print(confusion_matrix(label_test, model.predict(feature_test)))
             cm[i] = confusion_matrix(label_test, model.predict(feature_test))
             i += 1
+        score = np.mean(scores)
+        score_percent = str(np.round(score*100)) #convert score into percent and round to use it for plottitle of my_plot
 
         # plot_confusion_matrix(cm[1], activity_encoded, "test")
-        my_plot(cm, splits)
+        my_plot(cm, splits, score_percent)
         print("Average accuracy across " +
               str(splits) +
               " folds for all activities: " +
